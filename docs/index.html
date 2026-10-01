@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Consumo Energético Explicado</title>
+<meta name="description" content="Actividad grupal UNIR: análisis exploratorio, intervalos de confianza y regresión lineal sobre el consumo de luz y gas de 20 000 hogares en España, explicado paso a paso.">
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.34.0/plotly.min.js"></script>
+<script src="data.js"></script>
+</head>
+<body>
+
+<nav class="top"><div class="wrap">
+  <a href="#datos">0 · Datos</a>
+  <a href="#ej1">1 · Descriptiva</a>
+  <a href="#ej2">2 · Intervalos</a>
+  <a href="#ej3">3 · Regresión</a>
+  <a href="#conclusiones">Conclusiones</a>
+  <a href="#glosario">Glosario</a>
+  <button class="theme" id="themeBtn" title="Cambiar tema claro/oscuro">◐</button>
+</div></nav>
+
+<div class="wrap">
+
+<header class="hero">
+  <span class="tag">Maestría en IA · UNIR · Actividad grupal · Equipo 1011H</span>
+  <h1>¿Por qué unas casas gastan más energía que otras?</h1>
+  <p class="lead">Estudiamos el consumo de luz y gas de <b>20 000 hogares</b> en ciudades de España.
+  Cada técnica de estadística viene con dos explicaciones: una como para un niño de 10 años 🧒
+  y otra con lo que significa para nuestros datos 🔎.</p>
+</header>
+
+<div class="kid">
+  <div class="k-title">🧒 ¿Cómo leer esta página?</div>
+  Imagina que eres detective 🕵️. Tienes una libreta con 20 000 casas y por cada casa sabes
+  su tamaño, cuántos años tiene, qué frío hace en invierno, cómo se calienta y cuánta energía gasta.
+  Tu misión es descubrir <b>qué pistas explican por qué una casa gasta mucho gas</b>.
+  <ol class="steps">
+    <li><b>Ejercicio 1, mirar:</b> resumimos y dibujamos los datos para conocerlos.</li>
+    <li><b>Ejercicio 2, estimar:</b> calculamos cuánto gasta "de media" cada tipo de casa y con qué margen de error.</li>
+    <li><b>Ejercicio 3, predecir:</b> construimos una "receta matemática" que adivina el gas que gastará una casa.</li>
+  </ol>
+  Las cajas amarillas 🧒 son la explicación sencilla, las azules 🔎 son lo que descubrimos
+  y las de borde punteado 🎤 son la frase corta para la diapositiva.
+</div>
+
+<!-- ===================================================================== -->
+<section class="block" id="datos">
+  <h2>0 · Conociendo los datos</h2>
+  <p class="sub">Antes de calcular nada, revisamos qué hay en la libreta.</p>
+
+  <div class="grid4" id="dataTiles"></div>
+
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Variable</th><th style="text-align:left">Qué es</th><th style="text-align:left">Tipo</th></tr></thead>
+    <tbody>
+      <tr><td>Municipio</td><td style="text-align:left;white-space:normal">Ciudad del hogar (43 ciudades)</td><td style="text-align:left">Categórica</td></tr>
+      <tr><td>Temp_invierno … Temp_otoño</td><td style="text-align:left;white-space:normal">Temperatura media de cada estación (°C)</td><td style="text-align:left">Numérica</td></tr>
+      <tr><td>Superficie_vivienda</td><td style="text-align:left;white-space:normal">Tamaño de la casa (m²)</td><td style="text-align:left">Numérica</td></tr>
+      <tr><td>Tipo_calefaccion</td><td style="text-align:left;white-space:normal">Gas, Eléctrica u Otros</td><td style="text-align:left">Categórica</td></tr>
+      <tr><td>Antiguedad</td><td style="text-align:left;white-space:normal">Años desde que se construyó (hasta 2023)</td><td style="text-align:left">Numérica</td></tr>
+      <tr><td>Consumo_electricidad / _gas / _total</td><td style="text-align:left;white-space:normal">Energía gastada en un año (kWh). Total = luz + gas</td><td style="text-align:left">Numérica</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="see">
+    <div class="k-title">🔎 Tres cosas que notamos al revisar</div>
+    <ul class="tight">
+      <li>El enunciado habla de 10 000 hogares, pero <b>el archivo trae 20 000</b>. Usamos todos.</li>
+      <li><b>No hay datos vacíos ni hogares repetidos</b>, así que no hace falta limpiar nada.</li>
+      <li>Al mirar las temperaturas descubrimos que las ciudades se agrupan solas en
+        <b>5 zonas climáticas</b>: todas las ciudades de una zona tienen exactamente el mismo rango de temperaturas.
+        Las usaremos como "grupos de municipios".</li>
+    </ul>
+  </div>
+  <div class="tbl-wrap"><table id="tblZonas"></table></div>
+  <div class="kid">
+    <div class="k-title">🧒 ¿Qué es una "variable"?</div>
+    Es cada <b>columna</b> de la libreta, una cosa que <b>varía</b> de una casa a otra.
+    Hay dos clases: las <b>numéricas</b>, que se pueden sumar y promediar (como el tamaño),
+    y las <b>categóricas</b>, que son etiquetas (como "Gas" o "Eléctrica"). No tiene sentido
+    calcular "la media de Sevilla y Madrid", así que a cada clase le toca una herramienta distinta.
+  </div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="block" id="ej1">
+  <h2>Ejercicio 1 · Análisis exploratorio y descriptivo</h2>
+  <p class="sub">Resumir miles de números en unos pocos que se puedan entender, y luego dibujarlos.</p>
+
+  <h3>1.1 Medidas descriptivas</h3>
+
+  <div class="kid">
+    <div class="k-title">🧒 Las medidas, explicadas con tu clase del cole</div>
+    Imagina que en tu clase hay 25 niños y medimos cuántos caramelos 🍬 tiene cada uno.
+    <dl class="glos" style="margin-top:8px">
+      <dt>Media</dt><dd>Juntamos todos los caramelos y los <b>repartimos a partes iguales</b>. Lo que le toca a cada uno es la media. Ojo: si un niño tiene 500 caramelos, la media sube mucho aunque los demás tengan pocos.</dd>
+      <dt>Mediana</dt><dd>Ponemos a los niños <b>en fila del que tiene menos al que tiene más</b>. El que queda justo en el medio es la mediana. Al niño de los 500 caramelos no le hace caso.</dd>
+      <dt>Moda</dt><dd>El número que <b>más se repite</b>, como el sabor de helado más pedido 🍦.</dd>
+      <dt>Varianza</dt><dd>Mide <b>qué tan desordenados</b> están los caramelos: cuánto se aleja cada niño de la media. Se calcula con las distancias al cuadrado, así que sale en unidades raras ("caramelos²").</dd>
+      <dt>Desviación estándar</dt><dd>Es la raíz cuadrada de la varianza, para volver a "caramelos". Te dice <b>cuánto se aleja un niño típico de la media</b>.</dd>
+      <dt>Coeficiente de variación</dt><dd>La desviación dividida entre la media, en %. Sirve para comparar el desorden de cosas de tamaños diferentes, como elefantes 🐘 y ratones 🐭: 10 kg de diferencia es poquísimo para un elefante y muchísimo para un ratón.</dd>
+      <dt>Percentiles 25, 50 y 75</dt><dd>Si hubiera 100 niños en fila, el <b>P25</b> es lo que tiene el niño número 25 (una cuarta parte tiene menos), el <b>P50</b> es la mediana y el <b>P75</b> es el niño 75.</dd>
+      <dt>Rango intercuartílico (IQR)</dt><dd>P75 menos P25. Es el espacio que ocupa <b>la mitad de los niños del centro</b>, sin contar a los de las puntas.</dd>
+    </dl>
+  </div>
+
+  <div class="tbl-wrap"><table id="tblDesc"></table></div>
+  <p class="muted small">* En variables continuas (con decimales) casi ningún valor se repite exactamente, así que la "moda exacta"
+  aparece pocas veces y dice poco. Por eso añadimos la <b>moda por intervalos</b>: el tramo del histograma con más casas.</p>
+
+  <h3>1.2 Histogramas</h3>
+  <div class="kid">
+    <div class="k-title">🧒 ¿Qué es un histograma?</div>
+    Imagina cajones con etiquetas: "casas de 40 a 45 m²", "de 45 a 50 m²"… Metemos cada casa en su cajón
+    y apilamos un bloque 🧱 por casa. <b>Las torres más altas muestran dónde hay más casas.</b>
+    La forma del dibujo nos cuenta la historia: si es simétrica como una campana 🔔, si tiene una "cola" larga hacia un lado,
+    o si tiene dos jorobas como un camello 🐫.
+  </div>
+  <div class="controls" id="histCtl"></div>
+  <div id="chHist" class="chart"></div>
+  <div class="see" id="histText"></div>
+
+  <h3>1.3 Diagramas de caja (box-plots)</h3>
+  <div class="kid">
+    <div class="k-title">🧒 ¿Cómo se lee una caja con bigotes?</div>
+    Es un resumen de la fila de niños en un solo dibujo:
+    <ul class="tight">
+      <li>La <b>caja</b> va del P25 al P75, así que dentro está <b>la mitad del centro</b>.</li>
+      <li>La <b>raya dentro de la caja</b> es la mediana, el niño del medio.</li>
+      <li>Los <b>bigotes</b> llegan hasta los valores "normales" más lejanos, como máximo 1,5 veces el tamaño de la caja.</li>
+      <li>Los que quedan más allá de los bigotes son <b>atípicos</b>: casas que se salen de lo normal.</li>
+    </ul>
+    Lo útil es <b>poner varias cajas una al lado de otra</b> para comparar grupos de un vistazo.
+  </div>
+  <div class="controls">
+    <span class="lbl">Consumo:</span>
+    <span id="boxVar"></span>
+    <span class="lbl" style="margin-left:12px">Agrupar por:</span>
+    <span id="boxGrp"></span>
+  </div>
+  <div id="chBox" class="chart"></div>
+  <div class="see" id="boxText"></div>
+
+  <div class="slide">
+    <b>La calefacción manda.</b> Un hogar con calefacción de gas consume <b>~2,8 veces más gas</b> (mediana 8 486 kWh frente a ~3 020).
+    El clima influye menos: el interior frío gasta más gas, el Sur menos gas pero más luz (aire acondicionado) y el Norte atlántico es el que menos luz gasta.
+  </div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="block" id="ej2">
+  <h2>Ejercicio 2 · Inferencia: intervalos de confianza al 95 %</h2>
+  <p class="sub">Con una muestra, ¿qué podemos decir de <b>todos</b> los hogares de España?</p>
+
+  <div class="kid">
+    <div class="k-title">🧒 ¿Qué es un intervalo de confianza?</div>
+    Quieres saber cuántos caramelos tienen <b>de media todos los niños de España</b>, pero no puedes preguntarles a todos.
+    Le preguntas a un grupo (una <b>muestra</b>) y calculas su media. Como no preguntaste a todos, tu número puede fallar un poco.
+    <br><br>
+    Entonces, en lugar de decir "la media es 6 230", dices <b>"la media está entre 6 172 y 6 287"</b>.
+    Es como lanzar una <b>red de pesca 🎣</b> en lugar de un anzuelo: es más fácil atrapar el pez.
+    <br><br>
+    El <b>95 %</b> significa que si repitieras el experimento 100 veces con 100 muestras distintas,
+    unas <b>95 redes atraparían el pez</b> (la media real) y unas 5 fallarían. Abajo lo puedes ver.
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">🎣 Experimento: 100 muestras de 50 hogares cada una</h4>
+    <p class="small muted">Cada línea horizontal es un intervalo calculado con una muestra distinta de 50 hogares.
+    La línea vertical es la media REAL de los 20 000 hogares. Las rojas no la atrapan.</p>
+    <div id="chIcDemo" class="chart tall"></div>
+    <div class="see" id="icDemoText" style="margin-bottom:0"></div>
+  </div>
+
+  <h3>La receta del intervalo</h3>
+  <div class="formula">IC 95 % = media ± t × (s / √n)
+
+  media → lo que salió en la muestra
+  t     → ≈ 1,96 con muestras grandes (el "95 %")
+  s     → desviación estándar: qué tan desordenados están los datos
+  n     → cuántos hogares hay en el grupo
+  s/√n  → "error estándar": cuánto podría equivocarse la media</div>
+
+  <div class="card">
+    <h4 style="margin-top:0">🎛️ Juega con la red: ¿qué la hace más ancha o más estrecha?</h4>
+    <div class="sl"><label for="slS">Desorden (s, kWh)</label><input type="range" id="slS" min="500" max="5000" step="100" value="3927"><output id="oS"></output></div>
+    <div class="sl"><label for="slN">Hogares en el grupo (n)</label><input type="range" id="slN" min="10" max="10000" step="10" value="9934"><output id="oN"></output></div>
+    <div class="sl"><label for="slC">Nivel de confianza</label><input type="range" id="slC" min="80" max="99" step="1" value="95"><output id="oC"></output></div>
+    <p>Amplitud del intervalo: <span class="big-result" id="oW"></span> <span class="muted">kWh</span></p>
+    <p class="small muted" id="oWexp"></p>
+  </div>
+
+  <h3>Nuestros intervalos: separando por tipo de calefacción</h3>
+  <p>Elegimos <b>Tipo_calefaccion</b> porque en el Ejercicio 1 vimos que es lo que más separa el consumo.
+  También lo calculamos por zona climática.</p>
+  <div class="controls">
+    <span class="lbl">Separar por:</span><span id="icGrp"></span>
+  </div>
+  <p class="small muted">Con miles de hogares, los intervalos son tan estrechos (±1 % de la media) que dibujados sobre la media parecerían puntos. Por eso mostramos su <b>amplitud</b> (lo ancha que es la red), que es lo que pregunta el ejercicio. Pasa el ratón por las barras para ver cada intervalo, o mira la tabla.</p>
+  <div id="chIc" class="chart"></div>
+  <div class="tbl-wrap"><table id="tblIc"></table></div>
+
+  <div class="see" id="icText"></div>
+
+  <div class="slide">
+    <b>Los intervalos son estrechos</b> (±1 % de la media) porque tenemos miles de hogares.
+    <b>No tienen la misma amplitud:</b> se ensanchan cuando el grupo es <b>más disperso</b> (s grande) o <b>más pequeño</b> (n chico).
+    Los hogares con gas consumen 9 222 kWh de gas [9 145 – 9 300] frente a 3 283 [3 248 – 3 318] los eléctricos.
+  </div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="block" id="ej3">
+  <h2>Ejercicio 3 · Modelo de regresión lineal</h2>
+  <p class="sub">Construir una "receta" que prediga cuánto gas gastará una casa.</p>
+
+  <h3>3.1 ¿Qué variables se relacionan con el gas?</h3>
+  <div class="kid">
+    <div class="k-title">🧒 Diagrama de dispersión y correlación</div>
+    Ponemos <b>un punto por casa</b>: hacia la derecha va, por ejemplo, el tamaño, y hacia arriba el gas que gasta.
+    Si los puntos forman una <b>subida</b> ↗️, las dos cosas crecen juntas (correlación positiva).
+    Si forman una <b>bajada</b> ↘️, cuando una sube la otra baja (negativa).
+    Si son una <b>nube sin forma</b> ☁️, no tienen relación (correlación ≈ 0).
+    La <b>correlación (r)</b> va de −1 a +1 y mide qué tan "en línea recta" están los puntos.
+  </div>
+  <div class="controls"><span class="lbl">Eje horizontal:</span><span id="scVar"></span></div>
+  <div id="chScatter" class="chart tall"></div>
+  <p class="small muted">Se dibujan 3 000 hogares al azar para que el gráfico vaya fluido. Las correlaciones usan los 20 000.</p>
+  <div class="tbl-wrap"><table id="tblCorr"></table></div>
+  <div class="see">
+    <div class="k-title">🔎 Lo que vemos</div>
+    <ul class="tight">
+      <li><b>Superficie</b> es la pista más fuerte (r = 0,60 en general y <b>0,93 dentro de cada tipo de calefacción</b>).
+        En el gráfico se ven <b>dos "abanicos"</b>: el de arriba son los hogares con calefacción de gas y el de abajo el resto.</li>
+      <li><b>Temperatura de invierno</b>: relación negativa (r = −0,19 en general, ≈ −0,30 por grupo). Cuanto más frío, más gas.</li>
+      <li><b>Antigüedad</b>: relación positiva pero débil (r ≈ 0,08 a 0,13). Las casas viejas gastan un poco más porque aíslan peor.</li>
+      <li><b>Temperaturas de primavera, verano y otoño</b>: casi cero. No parece que importen para el gas, lo cual tiene sentido porque la calefacción se usa en invierno.</li>
+      <li><b>Tipo de calefacción</b> es categórica y no sale en la tabla, pero los colores muestran que <b>separa dos mundos</b>.</li>
+    </ul>
+  </div>
+
+  <h3>3.2 La receta: regresión lineal</h3>
+  <div class="kid">
+    <div class="k-title">🧒 ¿Qué es una regresión?</div>
+    Es buscar <b>la mejor línea recta</b> que pase por en medio de la nube de puntos, la que se equivoca lo menos posible
+    (método de <b>mínimos cuadrados</b>). Esa línea es una <b>receta</b>:
+    <div class="formula" style="margin:8px 0">Gas = base + (a × metros²) + (b × años) + (c × temperatura) + …</div>
+    Cada número a, b, c se llama <b>coeficiente</b> y dice <b>cuánto cambia el gas cuando ese ingrediente sube 1 unidad
+    y todo lo demás se queda igual</b>.
+    Para una variable de etiquetas como "Gas/Eléctrica/Otros" usamos <b>interruptores</b> (variables dummy):
+    "¿es de gas? sí = 1, no = 0".
+  </div>
+
+  <h4>Paso A · Empezamos simple: solo con la superficie</h4>
+  <div id="tblSimple" class="tbl-wrap"></div>
+  <div class="see" id="simpleText"></div>
+
+  <h4>Paso B · Probamos con TODAS las variables</h4>
+  <div id="tblTodo" class="tbl-wrap"></div>
+  <div class="kid">
+    <div class="k-title">🧒 ¿Qué es el valor p?</div>
+    Es la respuesta a: <b>"si este ingrediente en realidad NO importara nada, ¿qué tan raro sería ver lo que vemos?"</b>
+    Si el valor p es muy pequeño (menor que 0,05), sería rarísimo, así que concluimos que el ingrediente <b>sí importa</b> ✅.
+    Si es grande, no podemos descartar que sea pura casualidad ❌.
+    <br>Es como una moneda 🪙: si sale cara 3 veces seguidas no es raro, pero si sale 50 veces seguidas sospechas que está trucada.
+  </div>
+  <div class="see" id="todoText"></div>
+
+  <h4>Paso C · Modelo propuesto (quitando lo que sobra)</h4>
+  <div id="tblMult" class="tbl-wrap"></div>
+  <div class="grid3" id="multTiles"></div>
+  <div class="kid">
+    <div class="k-title">🧒 R² y R² ajustado</div>
+    <b>R²</b> responde: <b>"de todas las razones por las que unas casas gastan más que otras, ¿qué porcentaje explica mi receta?"</b>
+    Un R² de 0,90 quiere decir que la receta explica el 90 % de las diferencias.
+    <br><br>
+    El problema es que si echas más ingredientes, aunque sean inútiles (como "color de la puerta"), el R² nunca baja: siempre sube un poquito.
+    El <b>R² ajustado</b> es un árbitro 🧑‍⚖️ que <b>castiga meter ingredientes que no aportan</b>.
+    Si quitamos variables y el R² ajustado no baja, hicimos bien en quitarlas.
+  </div>
+  <div class="see" id="multText"></div>
+
+  <h3>3.3 ¿Se cumplen las condiciones? Análisis de residuos</h3>
+  <div class="kid">
+    <div class="k-title">🧒 ¿Qué son los residuos?</div>
+    Un <b>residuo</b> es <b>el error de la receta en una casa</b>: lo que gastó de verdad menos lo que la receta dijo.
+    Si la receta es buena, los errores deben parecer <b>ruido sin forma</b>, como confeti 🎊 tirado al azar alrededor de cero.
+    Si los errores forman un dibujo (un embudo, una curva, dos grupos), <b>la receta se está perdiendo algo</b>.
+    <br><br>
+    Para confiar en los valores p hay que revisar 4 condiciones (se recuerdan como <b>LINE</b>):
+    <ul class="tight">
+      <li><b>L</b>inealidad: la relación es una recta y no una curva.</li>
+      <li><b>I</b>ndependencia: el error de una casa no depende del de otra.</li>
+      <li><b>N</b>ormalidad: los errores tienen forma de campana 🔔.</li>
+      <li><b>E</b>qual variance (varianza constante): los errores son igual de grandes en casas que gastan poco y en casas que gastan mucho.</li>
+    </ul>
+  </div>
+  <div class="controls"><span class="lbl">Modelo:</span><span id="resModel"></span></div>
+  <div class="grid2">
+    <div><h4>Residuos vs. valores predichos</h4><div id="chResid" class="chart"></div></div>
+    <div><h4>Gráfico Q-Q (¿forma de campana?)</h4><div id="chQQ" class="chart"></div></div>
+  </div>
+  <div class="tbl-wrap"><table id="tblDiag"></table></div>
+  <div class="see" id="diagText"></div>
+
+  <h3>3.4 Divide y vencerás</h3>
+  <div class="kid">
+    <div class="k-title">🧒 ¿Por qué dividir?</div>
+    Si quieres una receta para hacer <b>pasteles y galletas</b> 🎂🍪 a la vez, te saldrá regular para los dos.
+    Es mejor tener <b>una receta para pasteles y otra para galletas</b>.
+    <br><br>
+    Con las casas pasa lo mismo. En los residuos del modelo único vimos dos grupos mezclados.
+    Las casas con calefacción de gas reaccionan <b>mucho más</b> al frío y al tamaño que las demás, porque todo su calor sale del gas.
+    Un solo coeficiente "promedio" no le sirve bien a ninguno de los dos grupos.
+  </div>
+  <div id="tblPorTipo" class="tbl-wrap"></div>
+  <div class="see" id="porTipoText"></div>
+
+  <h4>Un paso más: usar logaritmos (pensar en porcentajes)</h4>
+  <div class="kid">
+    <div class="k-title">🧒 ¿Para qué el logaritmo?</div>
+    A veces las cosas no <b>suman</b> sino que <b>multiplican</b>. Una casa del doble de tamaño no gasta "200 kWh más",
+    gasta <b>el doble</b>. Y 1 °C más de frío no añade lo mismo a una casa pequeña que a una mansión: añade un <b>porcentaje</b>.
+    El logaritmo convierte multiplicaciones en sumas para que nuestra receta de rectas funcione con porcentajes. 🪄
+  </div>
+  <div id="tblLog" class="tbl-wrap"></div>
+  <div class="see" id="logText"></div>
+
+  <h4>¿Cuál receta adivina mejor? (prueba justa con hogares que el modelo no vio)</h4>
+  <p class="small muted">Entrenamos cada modelo con el 80 % de los hogares y medimos su error medio (MAE) en el 20 % restante.
+  Es como estudiar con unos ejercicios y hacer el examen con otros distintos 📝.</p>
+  <div id="chMae" class="chart short"></div>
+
+  <h3>🎛️ Calculadora: prueba la receta tú mismo</h3>
+  <div class="card">
+    <div class="controls"><span class="lbl">Calefacción:</span><span id="calcTipo"></span></div>
+    <div class="sl"><label for="cSup">Superficie (m²)</label><input type="range" id="cSup" min="40" max="250" step="1" value="90"><output id="oSup"></output></div>
+    <div class="sl"><label for="cAnt">Antigüedad (años)</label><input type="range" id="cAnt" min="1" max="73" step="1" value="37"><output id="oAnt"></output></div>
+    <div class="sl"><label for="cTmp">Temp. invierno (°C)</label><input type="range" id="cTmp" min="2" max="16" step="0.5" value="10"><output id="oTmp"></output></div>
+    <div class="grid3" style="margin-top:12px">
+      <div class="tile"><div class="lbl">Modelo múltiple único</div><div class="val" id="pMult"></div><div class="note">kWh de gas al año</div></div>
+      <div class="tile"><div class="lbl">Modelo lineal de su grupo</div><div class="val" id="pLin"></div><div class="note">kWh de gas al año</div></div>
+      <div class="tile"><div class="lbl">Modelo log-log de su grupo ⭐</div><div class="val" id="pLog"></div><div class="note">kWh de gas al año</div></div>
+    </div>
+    <p class="small muted" id="calcExp"></p>
+  </div>
+
+  <div class="slide">
+    <b>Modelo propuesto:</b> Gas ~ Superficie + Antigüedad + Temp. invierno + Calefacción de gas, con R² ajustado = 0,903.
+    <b>Dividir por tipo de calefacción</b> sube R² a 0,98 y baja el error de 972 a 216 kWh.
+    Con logaritmos, R² = 0,9995 y error de 47 kWh.
+  </div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="block" id="conclusiones">
+  <h2>Conclusiones y recomendaciones</h2>
+  <p class="sub">Lo que diríamos al cerrar la presentación.</p>
+
+  <h3>¿Qué significan los coeficientes en la vida real?</h3>
+  <div class="tbl-wrap"><table id="tblInterp"></table></div>
+
+  <h3>¿Son buenas predictoras las variables elegidas?</h3>
+  <div class="grid2">
+    <div class="card">
+      <h4 style="margin-top:0">✅ Sí</h4>
+      <ul class="tight">
+        <li><b>Tipo de calefacción:</b> es la que más pesa. Separa dos poblaciones distintas.</li>
+        <li><b>Superficie:</b> es la pista continua más fuerte. El gas crece en proporción directa al tamaño.</li>
+        <li><b>Temperatura de invierno:</b> clara y con sentido físico. Más frío, más gas.</li>
+        <li><b>Antigüedad:</b> su efecto es pequeño pero muy significativo (+0,25 % por año).</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">❌ No (o casi nada)</h4>
+      <ul class="tight">
+        <li><b>Temp. de verano y otoño:</b> p &gt; 0,05, no aportan al gas.</li>
+        <li><b>Temp. de primavera:</b> sale "significativa" (p = 0,015) pero su efecto es ínfimo (8 kWh/°C)
+          y no cambia el R² ajustado. Con 20 000 datos casi todo sale significativo, así que hay que mirar también el <b>tamaño del efecto</b>.</li>
+        <li><b>"Otros" vs. "Eléctrica":</b> consumen el mismo gas (p = 0,89), así que podrían unirse en un solo grupo.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Recomendaciones</h3>
+  <ol class="steps">
+    <li><b>Para predecir el gas, usar un modelo por tipo de calefacción</b>, mejor en escala logarítmica. Es simple, se entiende y casi no falla.</li>
+    <li><b>Las ayudas para ahorrar energía deberían ir primero a hogares grandes, antiguos, con calefacción de gas y en zonas frías</b>, porque ahí está el mayor consumo y cada mejora rinde más.</li>
+    <li><b>Rehabilitar el aislamiento</b> en viviendas antiguas: cada año de antigüedad añade ~0,25 % de consumo, así que una casa de 70 años gasta ~16 % más que una nueva igual.</li>
+    <li><b>En el Sur y el Mediterráneo el reto es la electricidad</b> (aire acondicionado), no el gas. Las campañas deberían ser diferentes según la zona.</li>
+    <li><b>Cuidado:</b> son datos <b>simulados</b>, por eso el ajuste es tan perfecto. Con datos reales esperaríamos R² más bajos, y habría que añadir variables como el número de personas, la eficiencia de la caldera o los hábitos.</li>
+  </ol>
+</section>
+
+<!-- ===================================================================== -->
+<section class="block" id="glosario">
+  <h2>Glosario de bolsillo</h2>
+  <dl class="glos">
+    <dt>Población / muestra</dt><dd>Población: todos los hogares de España. Muestra: los 20 000 que tenemos.</dd>
+    <dt>Media</dt><dd>Repartir a partes iguales. Se deja arrastrar por los valores extremos.</dd>
+    <dt>Mediana</dt><dd>El valor del medio de la fila. Los valores extremos no la afectan.</dd>
+    <dt>Moda</dt><dd>El valor que más se repite.</dd>
+    <dt>Asimetría</dt><dd>Si el histograma tiene una "cola" larga hacia un lado. A la derecha (positiva), la media queda por encima de la mediana.</dd>
+    <dt>Desviación estándar</dt><dd>Cuánto se aleja un dato típico de la media.</dd>
+    <dt>Coef. de variación</dt><dd>Desviación ÷ media × 100. Sirve para comparar el desorden de cosas de escalas distintas.</dd>
+    <dt>Percentil / IQR</dt><dd>Posiciones en la fila (P25, P50, P75). IQR = P75 − P25: la mitad del centro.</dd>
+    <dt>Atípico</dt><dd>Un dato más allá de 1,5 × IQR desde la caja.</dd>
+    <dt>Error estándar</dt><dd>s / √n: cuánto se movería la media si tomáramos otra muestra.</dd>
+    <dt>Intervalo de confianza</dt><dd>Rango que, con el método usado, atrapa el valor real el 95 % de las veces.</dd>
+    <dt>Correlación (r)</dt><dd>De −1 a +1: qué tan en línea recta suben (o bajan) juntas dos variables.</dd>
+    <dt>Regresión lineal</dt><dd>La recta (o plano) que mejor predice una variable a partir de otras.</dd>
+    <dt>Coeficiente</dt><dd>Cuánto cambia la predicción si esa variable sube 1 y las demás se quedan igual.</dd>
+    <dt>Variable dummy</dt><dd>Un interruptor 0/1 para meter categorías en una regresión.</dd>
+    <dt>Valor p</dt><dd>Probabilidad de ver un efecto así de grande si en realidad no hubiera efecto. Si es &lt; 0,05, lo consideramos real.</dd>
+    <dt>R² / R² ajustado</dt><dd>% de las diferencias que explica el modelo. El ajustado castiga las variables inútiles.</dd>
+    <dt>Residuo</dt><dd>Real − predicho. El error del modelo en cada caso.</dd>
+    <dt>Heterocedasticidad</dt><dd>Cuando los errores crecen con el tamaño de la predicción (forma de embudo).</dd>
+    <dt>Q-Q plot</dt><dd>Compara los residuos con una campana perfecta. Si siguen la diagonal, son normales.</dd>
+    <dt>VIF</dt><dd>Mide si dos predictoras dicen "lo mismo" (multicolinealidad). Por debajo de 5 está bien.</dd>
+    <dt>MAE</dt><dd>Error absoluto medio: cuántos kWh se equivoca el modelo, de media.</dd>
+  </dl>
+</section>
+
+<footer>
+  Cálculos hechos en Python (pandas, scipy, statsmodels) con el script <code>analysis.py</code> del repositorio.
+  Datos: <code>consumo_energia_hogares.csv</code> (simulados, 20 000 hogares).
+  Intervalos con la t de Student. Regresiones por mínimos cuadrados ordinarios (OLS).
+</footer>
+
+</div>
+<script src="app.js"></script>
+</body>
+</html>
