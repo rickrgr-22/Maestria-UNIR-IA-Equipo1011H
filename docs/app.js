@@ -213,7 +213,7 @@ function renderIcDemo() {
   };
   draw(); window.__redraw.push(draw);
   $("icDemoText").innerHTML = `<div class="k-title">🔎 Resultado</div><b>${hits} de 100</b> intervalos atraparon la media real. Es justo lo que promete el "95 %".
-    Fíjate en que cada intervalo tiene un ancho distinto: depende de lo desordenada que salió cada muestra. Con solo 50 hogares las redes son
+    Fíjate en que cada intervalo tiene un ancho distinto: depende de lo desordenada que salió cada muestra. Con solo 50 contadores las horquillas son
     anchas (unos ±1 200 kWh). Con miles de hogares se estrechan muchísimo, como veremos ahora.`;
 }
 
@@ -231,8 +231,8 @@ function renderIcSlider() {
     const t = tq(c, n - 1), w = 2 * t * s / Math.sqrt(n);
     $("oS").textContent = nf(s); $("oN").textContent = nf(n); $("oC").textContent = Math.round(c * 100) + " %";
     $("oW").textContent = nf(w);
-    $("oWexp").innerHTML = `= 2 × t(${nf(t, 3)}) × ${nf(s)} / √${nf(n)}. Prueba: <b>4 veces más hogares → red la mitad de ancha</b> (por la raíz cuadrada).
-      Más desorden → red más ancha. Querer más seguridad (99 %) → red más ancha.
+    $("oWexp").innerHTML = `= 2 × t(${nf(t, 3)}) × ${nf(s)} / √${nf(n)}. Prueba: <b>leer 4 veces más contadores → horquilla la mitad de ancha</b> (por la raíz cuadrada).
+      Consumos más variados entre hogares → horquilla más ancha. Querer más seguridad (99 %) → horquilla más ancha.
       Los valores iniciales son los del grupo "calefacción de gas" (s = 3 927, n = 9 934).`;
   };
   ["slS", "slN", "slC"].forEach((id) => $(id).addEventListener("input", upd));
@@ -269,10 +269,10 @@ function renderIc() {
   const t = D.ic_tipo;
   $("icText").innerHTML = `<div class="k-title">🔎 ¿Tienen todos los intervalos la misma amplitud? <u>No</u>, y la fórmula explica por qué</div>
     <ul class="tight">
-      <li><b>Más desorden, red más ancha.</b> En gas, el grupo "Gas" tiene ${nf(t.Consumo_gas.Gas.n)} hogares (el más grande), pero su intervalo es el <b>más ancho</b>
+      <li><b>Consumos más variados, horquilla más ancha.</b> En gas, el grupo "Gas" tiene ${nf(t.Consumo_gas.Gas.n)} hogares (el más grande), pero su intervalo es el <b>más ancho</b>
         (${nf(t.Consumo_gas.Gas.amplitud)} kWh) porque su desviación es enorme (s = ${nf(t.Consumo_gas.Gas.desv)}). "Eléctrica" es mucho más homogéneo
         (s = ${nf(t.Consumo_gas["Eléctrica"].desv)}) y su intervalo mide solo ${nf(t.Consumo_gas["Eléctrica"].amplitud)} kWh.</li>
-      <li><b>Menos hogares, red más ancha.</b> "Eléctrica" y "Otros" tienen casi la misma s en gas (~1 370), pero "Otros" tiene menos hogares
+      <li><b>Menos hogares, horquilla más ancha.</b> "Eléctrica" y "Otros" tienen casi la misma s en gas (~1 370), pero "Otros" tiene menos hogares
         (${nf(t.Consumo_gas.Otros.n)} frente a ${nf(t.Consumo_gas["Eléctrica"].n)}), así que su intervalo es más ancho (${nf(t.Consumo_gas.Otros.amplitud)} frente a ${nf(t.Consumo_gas["Eléctrica"].amplitud)}).
         Por zonas pasa lo mismo: el "Interior templado" es la zona con menos hogares y tiene los intervalos más anchos.</li>
       <li><b>El consumo total</b> suma las variabilidades del gas y de la luz, por eso suele tener los intervalos más anchos.</li>
@@ -316,7 +316,7 @@ function renderModels() {
   coefTable("tblSimple", M.simple);
   $("simpleText").innerHTML = `<div class="k-title">🔎 Regresión simple: Gas = ${nf(M.simple.coef[0].b, 0)} + ${nf(M.simple.coef[1].b, 1)} × Superficie</div>
     Cada <b>m² extra suma unos ${nf(M.simple.coef[1].b, 0)} kWh</b> de gas al año, y el valor p ≈ 0 dice que la relación es real.
-    Pero el <b>R² = ${nf(M.simple.r2, 2)}</b>: el tamaño solo explica el ${nf(M.simple.r2 * 100, 0)} % de las diferencias y la receta se equivoca de media unos ${nf(M.simple.rmse)} kWh.
+    Pero el <b>R² = ${nf(M.simple.r2, 2)}</b>: el tamaño solo explica el ${nf(M.simple.r2 * 100, 0)} % de las diferencias y la fórmula se equivoca de media unos ${nf(M.simple.rmse)} kWh.
     El intercepto negativo no tiene sentido físico (no hay casas de 0 m²) y además no es significativo. Nos faltan ingredientes.`;
 
   coefTable("tblTodo", M.todo);
@@ -379,7 +379,7 @@ function renderResid() {
   draw(); window.__redraw.push(draw);
   $("diagText").innerHTML = `<div class="k-title">🔎 Lo que nos dicen los residuos (prueba a cambiar de modelo arriba)</div>
     <ul class="tight">
-      <li><b>Modelo múltiple:</b> los residuos <b>no son confeti</b>. Dibujan una <b>curva en forma de "V" o sonrisa 🙂</b>, así que la relación no es del todo una recta (falla la linealidad),
+      <li><b>Modelo múltiple:</b> los residuos <b>no son errores al azar</b>. Dibujan una <b>curva en forma de "V" o sonrisa 🙂</b>, así que la relación no es del todo una recta (falla la linealidad),
         y se abren como un <b>embudo 📢</b>: el error es pequeño en hogares que gastan poco y enorme en los que gastan mucho (heterocedasticidad, Breusch-Pagan p ≈ 0).
         Además, los colores van por caminos distintos: <b>los hogares con calefacción de gas tienen sus propios errores</b>. En el modelo simple el embudo es todavía mayor.
         El Q-Q plot se aleja de la diagonal en las puntas, con colas más pesadas que una campana.</li>
@@ -390,7 +390,7 @@ function renderResid() {
         y distintos según el tipo de calefacción.</li>
       <li><b>Log-log por grupo:</b> la curva y el embudo <b>desaparecen</b> (se cumple la linealidad) y los errores son diminutos, de ~1 %.
         El Q-Q plot todavía muestra una cola hacia la izquierda (algunos hogares gastan un poco menos de lo esperado), pero un error del 1 % no tiene importancia práctica.
-        Es la receta que mejor respeta las condiciones.</li>
+        Es la fórmula que mejor respeta las condiciones.</li>
     </ul>`;
 }
 
@@ -462,12 +462,12 @@ function renderCalc() {
 function renderInterp() {
   const L = D.modelos.por_tipo_log.Gas, G = D.modelos.por_tipo.Gas, m = D.modelos.multiple;
   const b = (mm, v) => mm.coef.find((c) => c.var === v).b;
-  table("tblInterp", ["Variable", "Modelo múltiple (kWh)", "Modelo log-log (%)", "En palabras de niño 🧒"], [
-    ["Superficie", `+${nf(b(m, "Superficie_vivienda"), 1)} por m²`, "Proporcional (exp. ≈ 1)", "Casa el doble de grande, gas el doble 🏠🏠"],
-    ["Antigüedad", `+${nf(b(m, "Antiguedad"), 1)} por año`, `+${nf((Math.exp(b(L, "Antiguedad")) - 1) * 100, 2)} % por año`, "Las casas viejitas tienen \"agujeros\" por donde se escapa el calor 🧓"],
-    ["Temp. invierno", `${nf(b(m, "Temp_invierno"), 1)} por °C`, `−${nf((1 - Math.exp(b(L, "Temp_invierno"))) * 100, 1)} % por °C`, "Cada grado más de frío, más gas para estar calentito 🥶"],
-    ["Calefacción de gas", `+${nf(b(m, "C(Tipo_calefaccion, Treatment('Eléctrica'))[T.Gas]"), 0)}`, "× 2,8", "Si el calor sale del gas, el gas se dispara 🔥"],
-    ["Calefacción Otros", `${nf(b(m, "C(Tipo_calefaccion, Treatment('Eléctrica'))[T.Otros]"), 1)} (no signif.)`, "× 1,0", "Igual que la eléctrica: el gas es solo para cocinar 🍳"],
+  table("tblInterp", ["Variable", "Modelo múltiple (kWh)", "Modelo log-log (%)", "Qué significa en el consumo 💡"], [
+    ["Superficie", `+${nf(b(m, "Superficie_vivienda"), 1)} por m²`, "Proporcional (exp. ≈ 1)", "Una vivienda del doble de m² necesita el doble de gas para calentarse"],
+    ["Antigüedad", `+${nf(b(m, "Antiguedad"), 1)} por año`, `+${nf((Math.exp(b(L, "Antiguedad")) - 1) * 100, 2)} % por año`, "Las viviendas antiguas aíslan peor (ventanas, muros sin aislamiento) y se escapa más calor"],
+    ["Temp. invierno", `${nf(b(m, "Temp_invierno"), 1)} por °C`, `−${nf((1 - Math.exp(b(L, "Temp_invierno"))) * 100, 1)} % por °C`, "Cada °C más frío en invierno obliga a la caldera a trabajar más horas"],
+    ["Calefacción de gas", `+${nf(b(m, "C(Tipo_calefaccion, Treatment('Eléctrica'))[T.Gas]"), 0)}`, "× 2,8", "Si la calefacción es de gas, el gas pasa de usarse solo para cocina y agua caliente a calentar toda la casa"],
+    ["Calefacción Otros", `${nf(b(m, "C(Tipo_calefaccion, Treatment('Eléctrica'))[T.Otros]"), 1)} (no signif.)`, "× 1,0", "Igual que la eléctrica: el gas solo se usa para cocinar y el agua caliente"],
   ].map((r) => r.map((x, i) => i === 3 ? `<span style="white-space:normal;display:block;text-align:left;min-width:220px">${x}</span>` : x)));
 }
 

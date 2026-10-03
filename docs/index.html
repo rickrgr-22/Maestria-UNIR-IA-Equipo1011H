@@ -27,28 +27,33 @@
   <span class="tag">Maestría en IA · UNIR · Actividad grupal · Equipo 1011H</span>
   <h1>¿Por qué unas casas gastan más energía que otras?</h1>
   <p class="lead">Estudiamos el consumo de luz y gas de <b>20 000 hogares</b> en ciudades de España.
-  Cada técnica de estadística viene con dos explicaciones: una como para un niño de 10 años 🧒
-  y otra con lo que significa para nuestros datos 🔎.</p>
+  Cada técnica de estadística se explica con ejemplos del día a día de la energía en casa 💡 (facturas, contadores, calefacción)
+  y después con lo que significa en nuestros datos 🔎.</p>
 </header>
 
 <div class="kid">
-  <div class="k-title">🧒 ¿Cómo leer esta página?</div>
-  Imagina que eres detective 🕵️. Tienes una libreta con 20 000 casas y por cada casa sabes
-  su tamaño, cuántos años tiene, qué frío hace en invierno, cómo se calienta y cuánta energía gasta.
-  Tu misión es descubrir <b>qué pistas explican por qué una casa gasta mucho gas</b>.
+  <div class="k-title">💡 ¿Cómo leer esta página?</div>
+  Imagina que trabajas en el departamento de análisis de una <b>compañía energética</b>. Tienes la ficha de 20 000 clientes:
+  el tamaño de su vivienda, cuántos años tiene, qué temperatura hace en su ciudad, cómo se calientan
+  y cuántos kWh de luz y de gas aparecen en sus facturas del año.
+  La pregunta es <b>qué explica que unas facturas sean mucho más altas que otras</b>.
   <ol class="steps">
-    <li><b>Ejercicio 1, mirar:</b> resumimos y dibujamos los datos para conocerlos.</li>
-    <li><b>Ejercicio 2, estimar:</b> calculamos cuánto gasta "de media" cada tipo de casa y con qué margen de error.</li>
-    <li><b>Ejercicio 3, predecir:</b> construimos una "receta matemática" que adivina el gas que gastará una casa.</li>
+    <li><b>Ejercicio 1, describir:</b> resumimos y dibujamos los consumos para conocer al "cliente típico" y los casos raros.</li>
+    <li><b>Ejercicio 2, estimar:</b> calculamos el consumo medio de cada tipo de hogar y el margen de error de esa cifra.</li>
+    <li><b>Ejercicio 3, modelar:</b> construimos una fórmula que estima el consumo de gas de un hogar a partir de sus características.</li>
   </ol>
-  Las cajas amarillas 🧒 son la explicación sencilla, las azules 🔎 son lo que descubrimos
-  y las de borde punteado 🎤 son la frase corta para la diapositiva.
+  <b>¿Qué es un kWh?</b> Es la unidad en la que viene la factura: 1 kWh es la energía que gasta un aparato de 1 000 W encendido una hora,
+  como un horno eléctrico durante 1 hora o una bombilla LED de 10 W durante 100 horas. Un hogar de nuestros datos gasta de media
+  unos <b>3 776 kWh de luz al año</b>, unos 10 kWh al día.
+  <br><br>
+  Las cajas amarillas 💡 explican cada técnica con ejemplos de consumo de energía, las azules 🔎 cuentan lo que descubrimos
+  y las de borde punteado 🎤 dan la frase corta para la diapositiva.
 </div>
 
 <!-- ===================================================================== -->
 <section class="block" id="datos">
   <h2>0 · Conociendo los datos</h2>
-  <p class="sub">Antes de calcular nada, revisamos qué hay en la libreta.</p>
+  <p class="sub">Antes de calcular nada, revisamos qué información tenemos de cada hogar.</p>
 
   <div class="grid4" id="dataTiles"></div>
 
@@ -76,11 +81,14 @@
   </div>
   <div class="tbl-wrap"><table id="tblZonas"></table></div>
   <div class="kid">
-    <div class="k-title">🧒 ¿Qué es una "variable"?</div>
-    Es cada <b>columna</b> de la libreta, una cosa que <b>varía</b> de una casa a otra.
-    Hay dos clases: las <b>numéricas</b>, que se pueden sumar y promediar (como el tamaño),
-    y las <b>categóricas</b>, que son etiquetas (como "Gas" o "Eléctrica"). No tiene sentido
-    calcular "la media de Sevilla y Madrid", así que a cada clase le toca una herramienta distinta.
+    <div class="k-title">💡 ¿Qué es una "variable"?</div>
+    Es cada <b>dato de la ficha del cliente</b>, algo que cambia de un hogar a otro. Hay dos clases:
+    <ul class="tight">
+      <li><b>Numéricas:</b> se pueden sumar y promediar, como los kWh de la factura o los m² de la vivienda.</li>
+      <li><b>Categóricas:</b> son etiquetas, como el tipo de calefacción (Gas, Eléctrica, Otros) o la ciudad.
+        No tiene sentido calcular "la media entre Sevilla y Madrid", pero sí comparar el consumo de los hogares de Sevilla con el de los de Madrid.</li>
+    </ul>
+    Por eso a cada clase le toca una herramienta distinta: medias e histogramas para las numéricas, y comparaciones por grupos para las categóricas.
   </div>
 </section>
 
@@ -88,21 +96,37 @@
 <section class="block" id="ej1">
   <h2>Ejercicio 1 · Análisis exploratorio y descriptivo</h2>
   <p class="sub">Resumir miles de números en unos pocos que se puedan entender, y luego dibujarlos.</p>
+  <div class="task"><div class="k-title">📋 Lo que pide la tarea</div>
+    <ul class="tight">
+      <li><b>Medidas descriptivas</b> (media, mediana, moda, varianza, desviación estándar, CV, IQR y percentiles 25/50/75) de <b>Superficie_vivienda, Antiguedad y Consumo_gas</b>. Ver 1.1.</li>
+      <li><b>Histogramas</b> de esas tres variables, con su interpretación. Ver 1.2.</li>
+      <li><b>Box-plots</b> del consumo por <b>tipo de calefacción</b> y por <b>municipios o grupos de municipios</b>, con conclusiones. Ver 1.3.</li>
+    </ul></div>
 
   <h3>1.1 Medidas descriptivas</h3>
 
   <div class="kid">
-    <div class="k-title">🧒 Las medidas, explicadas con tu clase del cole</div>
-    Imagina que en tu clase hay 25 niños y medimos cuántos caramelos 🍬 tiene cada uno.
+    <div class="k-title">💡 Las medidas, explicadas con la factura de la luz</div>
+    Para entender cada medida usamos el <b>consumo de electricidad</b> de nuestros 20 000 hogares. En la tabla de abajo están calculadas
+    para las tres variables que pide la tarea: superficie, antigüedad y gas.
     <dl class="glos" style="margin-top:8px">
-      <dt>Media</dt><dd>Juntamos todos los caramelos y los <b>repartimos a partes iguales</b>. Lo que le toca a cada uno es la media. Ojo: si un niño tiene 500 caramelos, la media sube mucho aunque los demás tengan pocos.</dd>
-      <dt>Mediana</dt><dd>Ponemos a los niños <b>en fila del que tiene menos al que tiene más</b>. El que queda justo en el medio es la mediana. Al niño de los 500 caramelos no le hace caso.</dd>
-      <dt>Moda</dt><dd>El número que <b>más se repite</b>, como el sabor de helado más pedido 🍦.</dd>
-      <dt>Varianza</dt><dd>Mide <b>qué tan desordenados</b> están los caramelos: cuánto se aleja cada niño de la media. Se calcula con las distancias al cuadrado, así que sale en unidades raras ("caramelos²").</dd>
-      <dt>Desviación estándar</dt><dd>Es la raíz cuadrada de la varianza, para volver a "caramelos". Te dice <b>cuánto se aleja un niño típico de la media</b>.</dd>
-      <dt>Coeficiente de variación</dt><dd>La desviación dividida entre la media, en %. Sirve para comparar el desorden de cosas de tamaños diferentes, como elefantes 🐘 y ratones 🐭: 10 kg de diferencia es poquísimo para un elefante y muchísimo para un ratón.</dd>
-      <dt>Percentiles 25, 50 y 75</dt><dd>Si hubiera 100 niños en fila, el <b>P25</b> es lo que tiene el niño número 25 (una cuarta parte tiene menos), el <b>P50</b> es la mediana y el <b>P75</b> es el niño 75.</dd>
-      <dt>Rango intercuartílico (IQR)</dt><dd>P75 menos P25. Es el espacio que ocupa <b>la mitad de los niños del centro</b>, sin contar a los de las puntas.</dd>
+      <dt>Media</dt><dd>Sumamos la luz que gastan todos los hogares (75,5 millones de kWh) y la <b>repartimos a partes iguales</b>:
+        a cada uno le tocan <b>3 776 kWh</b>. Ojo: unos pocos hogares con calefacción eléctrica que gastan más de 10 000 kWh empujan la media hacia arriba.</dd>
+      <dt>Mediana</dt><dd>Ordenamos las 20 000 facturas de menor a mayor y miramos la del medio: <b>3 083 kWh</b>.
+        La mitad de los hogares gasta menos y la otra mitad más. A diferencia de la media, los consumos extremos no la mueven.
+        Por eso la mediana sale más baja que la media.</dd>
+      <dt>Moda</dt><dd>El valor que <b>más se repite</b>. Con consumos exactos casi ninguno se repite (el más frecuente, 2 064 kWh, aparece 15 veces).
+        Es más útil agrupar: el tramo más común es <b>2 000 a 2 500 kWh</b>, con 2 938 hogares.</dd>
+      <dt>Varianza</dt><dd>Mide <b>cuánto se alejan las facturas de la media</b>. Eleva las distancias al cuadrado, así que sale en "kWh²",
+        una unidad que no se puede interpretar directamente.</dd>
+      <dt>Desviación estándar</dt><dd>Es la raíz de la varianza, de vuelta en kWh: <b>2 373 kWh</b>.
+        Quiere decir que una factura típica se aleja unos 2 400 kWh de la media. Si todos los hogares gastaran lo mismo, sería 0.</dd>
+      <dt>Coeficiente de variación</dt><dd>La desviación entre la media, en %: 2 373 / 3 776 = <b>63 %</b>. Sirve para comparar la dispersión de variables
+        con unidades distintas: la luz (63 %) varía mucho más entre hogares que la superficie de las viviendas (39 %), aunque una se mida en kWh y la otra en m².</dd>
+      <dt>Percentiles 25, 50 y 75</dt><dd>Con las facturas ordenadas, el <b>P25</b> (2 175 kWh) deja por debajo a la cuarta parte de los hogares,
+        el <b>P50</b> es la mediana (3 083) y el <b>P75</b> (4 676) deja por debajo a tres cuartas partes. Son como los "cortes" de la fila de clientes.</dd>
+      <dt>Rango intercuartílico (IQR)</dt><dd>P75 − P25 = 4 676 − 2 175 = <b>2 501 kWh</b>. Es el rango en el que está <b>la mitad central de los hogares</b>,
+        sin contar a los que gastan muchísimo o muy poco.</dd>
     </dl>
   </div>
 
@@ -112,11 +136,16 @@
 
   <h3>1.2 Histogramas</h3>
   <div class="kid">
-    <div class="k-title">🧒 ¿Qué es un histograma?</div>
-    Imagina cajones con etiquetas: "casas de 40 a 45 m²", "de 45 a 50 m²"… Metemos cada casa en su cajón
-    y apilamos un bloque 🧱 por casa. <b>Las torres más altas muestran dónde hay más casas.</b>
-    La forma del dibujo nos cuenta la historia: si es simétrica como una campana 🔔, si tiene una "cola" larga hacia un lado,
-    o si tiene dos jorobas como un camello 🐫.
+    <div class="k-title">💡 ¿Qué es un histograma?</div>
+    Dividimos el consumo en tramos, igual que hacen algunas tarifas: "de 0 a 500 kWh", "de 500 a 1 000 kWh"…
+    Contamos cuántos hogares caen en cada tramo y dibujamos una barra por tramo. <b>Las barras más altas muestran los consumos más habituales.</b>
+    <br><br>
+    La forma del dibujo da mucha información:
+    <ul class="tight">
+      <li><b>Simétrica, como una campana:</b> la mayoría gasta algo cercano a la media.</li>
+      <li><b>Con una "cola" larga a la derecha:</b> la mayoría gasta poco y unos pocos gastan muchísimo.</li>
+      <li><b>Con dos montañas:</b> en realidad hay dos tipos de hogares mezclados. Como veremos, eso pasa con el gas.</li>
+    </ul>
   </div>
   <div class="controls" id="histCtl"></div>
   <div id="chHist" class="chart"></div>
@@ -124,15 +153,16 @@
 
   <h3>1.3 Diagramas de caja (box-plots)</h3>
   <div class="kid">
-    <div class="k-title">🧒 ¿Cómo se lee una caja con bigotes?</div>
-    Es un resumen de la fila de niños en un solo dibujo:
+    <div class="k-title">💡 ¿Cómo se lee una caja con bigotes?</div>
+    Resume en un solo dibujo cómo se reparten las facturas de un grupo de hogares:
     <ul class="tight">
-      <li>La <b>caja</b> va del P25 al P75, así que dentro está <b>la mitad del centro</b>.</li>
-      <li>La <b>raya dentro de la caja</b> es la mediana, el niño del medio.</li>
-      <li>Los <b>bigotes</b> llegan hasta los valores "normales" más lejanos, como máximo 1,5 veces el tamaño de la caja.</li>
-      <li>Los que quedan más allá de los bigotes son <b>atípicos</b>: casas que se salen de lo normal.</li>
+      <li>La <b>caja</b> va del P25 al P75: ahí está <b>la mitad "normal" de los hogares</b> del grupo.</li>
+      <li>La <b>raya dentro de la caja</b> es la mediana, el consumo del hogar del medio.</li>
+      <li>Los <b>bigotes</b> llegan hasta los consumos más lejanos que aún se consideran normales (como máximo 1,5 veces el alto de la caja).</li>
+      <li>Más allá de los bigotes están los <b>atípicos</b>: hogares que consumen mucho más (o menos) de lo habitual, como un chalet de 240 m².</li>
     </ul>
-    Lo útil es <b>poner varias cajas una al lado de otra</b> para comparar grupos de un vistazo.
+    Lo útil es <b>poner varias cajas una al lado de otra</b>, por ejemplo hogares con calefacción de gas frente a eléctrica,
+    para ver de un vistazo qué grupo gasta más y cuál tiene consumos más variados (caja más alta).
   </div>
   <div class="controls">
     <span class="lbl">Consumo:</span>
@@ -153,39 +183,46 @@
 <section class="block" id="ej2">
   <h2>Ejercicio 2 · Inferencia: intervalos de confianza al 95 %</h2>
   <p class="sub">Con una muestra, ¿qué podemos decir de <b>todos</b> los hogares de España?</p>
+  <div class="task"><div class="k-title">📋 Lo que pide la tarea</div>
+    <ul class="tight">
+      <li>Intervalo de confianza al <b>95 %</b> para la <b>media</b> del consumo de <b>gas, electricidad y total</b>.</li>
+      <li>Separando por una variable relevante. Elegimos el <b>tipo de calefacción</b> y, como extra, la <b>zona climática</b>.</li>
+      <li>Responder <b>si todos los intervalos tienen la misma amplitud</b> e interpretar los resultados.</li>
+    </ul></div>
 
   <div class="kid">
-    <div class="k-title">🧒 ¿Qué es un intervalo de confianza?</div>
-    Quieres saber cuántos caramelos tienen <b>de media todos los niños de España</b>, pero no puedes preguntarles a todos.
-    Le preguntas a un grupo (una <b>muestra</b>) y calculas su media. Como no preguntaste a todos, tu número puede fallar un poco.
+    <div class="k-title">💡 ¿Qué es un intervalo de confianza?</div>
+    Una compañía quiere saber el <b>consumo medio de luz de todos los hogares de España</b>, pero no puede leer millones de contadores.
+    Lee una <b>muestra</b> (nuestros 20 000 hogares) y obtiene una media de 3 776 kWh. Si hubiera elegido otros 20 000 hogares,
+    la media habría salido un poco distinta, así que esa cifra tiene un margen de error.
     <br><br>
-    Entonces, en lugar de decir "la media es 6 230", dices <b>"la media está entre 6 172 y 6 287"</b>.
-    Es como lanzar una <b>red de pesca 🎣</b> en lugar de un anzuelo: es más fácil atrapar el pez.
+    Por eso, en vez de dar un solo número, damos una <b>horquilla</b>: "el consumo medio de luz de todos los hogares está
+    <b>entre 3 743 y 3 809 kWh</b>, con un 95 % de confianza".
     <br><br>
-    El <b>95 %</b> significa que si repitieras el experimento 100 veces con 100 muestras distintas,
-    unas <b>95 redes atraparían el pez</b> (la media real) y unas 5 fallarían. Abajo lo puedes ver.
+    El <b>95 %</b> significa que si repitiéramos el estudio 100 veces, leyendo cada vez contadores distintos,
+    unas <b>95 horquillas contendrían la media real</b> y unas 5 no. En el experimento de abajo lo puedes ver.
   </div>
 
   <div class="card">
-    <h4 style="margin-top:0">🎣 Experimento: 100 muestras de 50 hogares cada una</h4>
-    <p class="small muted">Cada línea horizontal es un intervalo calculado con una muestra distinta de 50 hogares.
-    La línea vertical es la media REAL de los 20 000 hogares. Las rojas no la atrapan.</p>
+    <h4 style="margin-top:0">🔬 Experimento: 100 compañías leen 50 contadores de gas cada una</h4>
+    <p class="small muted">Cada línea horizontal es la horquilla del 95 % que calcularía una compañía con una muestra distinta de 50 hogares.
+    La línea vertical es el consumo medio REAL de gas de los 20 000 hogares. Las horquillas rojas no lo contienen.</p>
     <div id="chIcDemo" class="chart tall"></div>
     <div class="see" id="icDemoText" style="margin-bottom:0"></div>
   </div>
 
-  <h3>La receta del intervalo</h3>
+  <h3>La fórmula del intervalo</h3>
   <div class="formula">IC 95 % = media ± t × (s / √n)
 
   media → lo que salió en la muestra
   t     → ≈ 1,96 con muestras grandes (el "95 %")
-  s     → desviación estándar: qué tan desordenados están los datos
+  s     → desviación estándar: cuánto varían los consumos entre hogares
   n     → cuántos hogares hay en el grupo
   s/√n  → "error estándar": cuánto podría equivocarse la media</div>
 
   <div class="card">
-    <h4 style="margin-top:0">🎛️ Juega con la red: ¿qué la hace más ancha o más estrecha?</h4>
-    <div class="sl"><label for="slS">Desorden (s, kWh)</label><input type="range" id="slS" min="500" max="5000" step="100" value="3927"><output id="oS"></output></div>
+    <h4 style="margin-top:0">🎛️ Prueba tú: ¿qué hace la horquilla más ancha o más estrecha?</h4>
+    <div class="sl"><label for="slS">Dispersión de consumos (s, kWh)</label><input type="range" id="slS" min="500" max="5000" step="100" value="3927"><output id="oS"></output></div>
     <div class="sl"><label for="slN">Hogares en el grupo (n)</label><input type="range" id="slN" min="10" max="10000" step="10" value="9934"><output id="oN"></output></div>
     <div class="sl"><label for="slC">Nivel de confianza</label><input type="range" id="slC" min="80" max="99" step="1" value="95"><output id="oC"></output></div>
     <p>Amplitud del intervalo: <span class="big-result" id="oW"></span> <span class="muted">kWh</span></p>
@@ -198,7 +235,7 @@
   <div class="controls">
     <span class="lbl">Separar por:</span><span id="icGrp"></span>
   </div>
-  <p class="small muted">Con miles de hogares, los intervalos son tan estrechos (±1 % de la media) que dibujados sobre la media parecerían puntos. Por eso mostramos su <b>amplitud</b> (lo ancha que es la red), que es lo que pregunta el ejercicio. Pasa el ratón por las barras para ver cada intervalo, o mira la tabla.</p>
+  <p class="small muted">Con miles de hogares, los intervalos son tan estrechos (±1 % de la media) que dibujados sobre la media parecerían puntos. Por eso mostramos su <b>amplitud</b> (lo ancha que es la horquilla), que es lo que pregunta el ejercicio. Pasa el ratón por las barras para ver cada intervalo, o mira la tabla.</p>
   <div id="chIc" class="chart"></div>
   <div class="tbl-wrap"><table id="tblIc"></table></div>
 
@@ -214,16 +251,26 @@
 <!-- ===================================================================== -->
 <section class="block" id="ej3">
   <h2>Ejercicio 3 · Modelo de regresión lineal</h2>
-  <p class="sub">Construir una "receta" que prediga cuánto gas gastará una casa.</p>
+  <p class="sub">Construir una fórmula que estime cuánto gas consumirá un hogar según su tamaño, antigüedad, clima y calefacción.</p>
+  <div class="task"><div class="k-title">📋 Lo que pide la tarea</div>
+    <ul class="tight">
+      <li>Examinar <b>gráficamente</b> la relación de cada variable con el <b>consumo de gas</b>. Ver 3.1.</li>
+      <li>Proponer un modelo y <b>justificar</b> las variables, revisar los <b>valores p</b> y el <b>R² y R² ajustado</b>. Ver 3.2.</li>
+      <li>Revisar los <b>residuos</b> y las condiciones para la inferencia. Ver 3.3.</li>
+      <li><b>Divide y vencerás:</b> ¿mejora el modelo si dividimos los datos? Ver 3.4.</li>
+      <li><b>Conclusiones:</b> qué significan los coeficientes y si las variables son buenas predictoras. Ver la sección Conclusiones.</li>
+    </ul></div>
 
   <h3>3.1 ¿Qué variables se relacionan con el gas?</h3>
   <div class="kid">
-    <div class="k-title">🧒 Diagrama de dispersión y correlación</div>
-    Ponemos <b>un punto por casa</b>: hacia la derecha va, por ejemplo, el tamaño, y hacia arriba el gas que gasta.
-    Si los puntos forman una <b>subida</b> ↗️, las dos cosas crecen juntas (correlación positiva).
-    Si forman una <b>bajada</b> ↘️, cuando una sube la otra baja (negativa).
-    Si son una <b>nube sin forma</b> ☁️, no tienen relación (correlación ≈ 0).
-    La <b>correlación (r)</b> va de −1 a +1 y mide qué tan "en línea recta" están los puntos.
+    <div class="k-title">💡 Diagrama de dispersión y correlación</div>
+    Ponemos <b>un punto por hogar</b>: en horizontal, una característica de la vivienda (por ejemplo los m²) y en vertical, su consumo de gas.
+    <ul class="tight">
+      <li>Si los puntos <b>suben</b> ↗️, las dos cosas crecen juntas (correlación positiva): más metros que calentar, más gas.</li>
+      <li>Si <b>bajan</b> ↘️, cuando una sube la otra baja (negativa): cuanto más templado es el invierno, menos gas.</li>
+      <li>Si son una <b>nube sin forma</b> ☁️, no hay relación (correlación ≈ 0): por ejemplo, la temperatura del verano y el gas de la calefacción.</li>
+    </ul>
+    La <b>correlación (r)</b> va de −1 a +1 y mide qué tan cerca están los puntos de una línea recta.
   </div>
   <div class="controls"><span class="lbl">Eje horizontal:</span><span id="scVar"></span></div>
   <div id="chScatter" class="chart tall"></div>
@@ -241,16 +288,20 @@
     </ul>
   </div>
 
-  <h3>3.2 La receta: regresión lineal</h3>
+  <h3>3.2 La fórmula: regresión lineal</h3>
   <div class="kid">
-    <div class="k-title">🧒 ¿Qué es una regresión?</div>
-    Es buscar <b>la mejor línea recta</b> que pase por en medio de la nube de puntos, la que se equivoca lo menos posible
-    (método de <b>mínimos cuadrados</b>). Esa línea es una <b>receta</b>:
-    <div class="formula" style="margin:8px 0">Gas = base + (a × metros²) + (b × años) + (c × temperatura) + …</div>
-    Cada número a, b, c se llama <b>coeficiente</b> y dice <b>cuánto cambia el gas cuando ese ingrediente sube 1 unidad
-    y todo lo demás se queda igual</b>.
-    Para una variable de etiquetas como "Gas/Eléctrica/Otros" usamos <b>interruptores</b> (variables dummy):
-    "¿es de gas? sí = 1, no = 0".
+    <div class="k-title">💡 ¿Qué es una regresión? Piensa en cómo se calcula una factura</div>
+    Una factura se calcula con una fórmula: <b>un término fijo + un precio por cada kWh consumido</b>.
+    Una regresión hace lo mismo, pero al revés: a partir de miles de hogares, <b>descubre la fórmula</b> que mejor explica cuánto consumen.
+    <div class="formula" style="margin:8px 0">Gas (kWh) = base + a × m² + b × años de la vivienda + c × temperatura de invierno + …</div>
+    <ul class="tight">
+      <li>La <b>base (intercepto)</b> es como el término fijo.</li>
+      <li>Cada <b>coeficiente</b> (a, b, c) es como un "precio": <b>cuántos kWh más (o menos) se consumen cuando esa característica sube 1 unidad
+        y las demás se quedan igual</b>. Por ejemplo, cuántos kWh añade cada m² más de vivienda.</li>
+      <li>Se elige la fórmula que <b>menos se equivoca</b> sumando los errores de todos los hogares al cuadrado (<b>mínimos cuadrados</b>).</li>
+      <li>Para el tipo de calefacción, que es una etiqueta, usamos <b>interruptores</b> (variables dummy): "¿tiene calefacción de gas? sí = 1, no = 0".
+        Su coeficiente indica cuántos kWh añade tener esa calefacción.</li>
+    </ul>
   </div>
 
   <h4>Paso A · Empezamos simple: solo con la superficie</h4>
@@ -260,11 +311,16 @@
   <h4>Paso B · Probamos con TODAS las variables</h4>
   <div id="tblTodo" class="tbl-wrap"></div>
   <div class="kid">
-    <div class="k-title">🧒 ¿Qué es el valor p?</div>
-    Es la respuesta a: <b>"si este ingrediente en realidad NO importara nada, ¿qué tan raro sería ver lo que vemos?"</b>
-    Si el valor p es muy pequeño (menor que 0,05), sería rarísimo, así que concluimos que el ingrediente <b>sí importa</b> ✅.
-    Si es grande, no podemos descartar que sea pura casualidad ❌.
-    <br>Es como una moneda 🪙: si sale cara 3 veces seguidas no es raro, pero si sale 50 veces seguidas sospechas que está trucada.
+    <div class="k-title">💡 ¿Qué es el valor p?</div>
+    Supón que un vecino cambia sus bombillas por LED y el mes siguiente su factura baja 3 €.
+    ¿Fueron las LED o pura casualidad (un mes más corto, unos días de vacaciones)? Con un solo hogar no se puede saber.
+    <br><br>
+    El valor p responde a esa duda: <b>"si esta variable en realidad NO influyera en el consumo, ¿qué probabilidad habría de ver un efecto así de grande por casualidad?"</b>
+    <ul class="tight">
+      <li><b>p &lt; 0,05:</b> sería muy raro que fuera casualidad, así que concluimos que la variable <b>sí influye</b> ✅.</li>
+      <li><b>p ≥ 0,05:</b> no podemos descartar la casualidad. Es mejor no usar esa variable para explicar el consumo ❌.</li>
+    </ul>
+    Ojo: con 20 000 hogares, hasta efectos minúsculos dan p pequeño. Por eso además miramos <b>cuántos kWh</b> supone el efecto.
   </div>
   <div class="see" id="todoText"></div>
 
@@ -272,29 +328,32 @@
   <div id="tblMult" class="tbl-wrap"></div>
   <div class="grid3" id="multTiles"></div>
   <div class="kid">
-    <div class="k-title">🧒 R² y R² ajustado</div>
-    <b>R²</b> responde: <b>"de todas las razones por las que unas casas gastan más que otras, ¿qué porcentaje explica mi receta?"</b>
-    Un R² de 0,90 quiere decir que la receta explica el 90 % de las diferencias.
+    <div class="k-title">💡 R² y R² ajustado</div>
+    Las facturas de gas de nuestros hogares son muy distintas entre sí: unas de 1 000 kWh y otras de 30 000.
+    <b>R²</b> responde: <b>"de todas esas diferencias entre facturas, ¿qué porcentaje explica mi fórmula?"</b>
+    Un R² de 0,90 significa que la fórmula explica el 90 % de las diferencias y que el 10 % restante se debe a cosas que no medimos (hábitos, número de personas…).
     <br><br>
-    El problema es que si echas más ingredientes, aunque sean inútiles (como "color de la puerta"), el R² nunca baja: siempre sube un poquito.
-    El <b>R² ajustado</b> es un árbitro 🧑‍⚖️ que <b>castiga meter ingredientes que no aportan</b>.
+    El problema es que si añadimos más variables a la fórmula, aunque no tengan nada que ver con el consumo (por ejemplo el color de la fachada),
+    el R² siempre sube un poquito. El <b>R² ajustado</b> corrige eso: <b>penaliza las variables que no aportan</b>.
     Si quitamos variables y el R² ajustado no baja, hicimos bien en quitarlas.
   </div>
   <div class="see" id="multText"></div>
 
   <h3>3.3 ¿Se cumplen las condiciones? Análisis de residuos</h3>
   <div class="kid">
-    <div class="k-title">🧒 ¿Qué son los residuos?</div>
-    Un <b>residuo</b> es <b>el error de la receta en una casa</b>: lo que gastó de verdad menos lo que la receta dijo.
-    Si la receta es buena, los errores deben parecer <b>ruido sin forma</b>, como confeti 🎊 tirado al azar alrededor de cero.
-    Si los errores forman un dibujo (un embudo, una curva, dos grupos), <b>la receta se está perdiendo algo</b>.
+    <div class="k-title">💡 ¿Qué son los residuos? Como la "regularización" de una factura estimada</div>
+    Cuando la compañía no puede leer el contador, manda una <b>factura estimada</b>. Al leerlo después, aparece la diferencia entre lo que se consumió de verdad y lo estimado.
+    Eso es exactamente un <b>residuo</b>: <b>consumo real − consumo que predijo la fórmula</b>.
     <br><br>
-    Para confiar en los valores p hay que revisar 4 condiciones (se recuerdan como <b>LINE</b>):
+    Si la fórmula es buena, esas diferencias deben ser <b>pequeñas y al azar</b>: unas veces por arriba y otras por abajo, sin ningún patrón.
+    Si los errores siguen un dibujo (siempre se queda corta con los hogares grandes, o falla más en un grupo), <b>a la fórmula le falta algo</b>.
+    <br><br>
+    Para fiarnos de los valores p hay que revisar 4 condiciones (se recuerdan como <b>LINE</b>):
     <ul class="tight">
-      <li><b>L</b>inealidad: la relación es una recta y no una curva.</li>
-      <li><b>I</b>ndependencia: el error de una casa no depende del de otra.</li>
-      <li><b>N</b>ormalidad: los errores tienen forma de campana 🔔.</li>
-      <li><b>E</b>qual variance (varianza constante): los errores son igual de grandes en casas que gastan poco y en casas que gastan mucho.</li>
+      <li><b>L</b>inealidad: cada m² extra suma lo mismo, tanto en un piso pequeño como en uno grande, sin curvas.</li>
+      <li><b>I</b>ndependencia: el error en la factura de un hogar no influye en el error de otro.</li>
+      <li><b>N</b>ormalidad: la mayoría de los errores son pequeños y los grandes son raros, con forma de campana 🔔.</li>
+      <li><b>E</b>qual variance (varianza constante): la fórmula se equivoca lo mismo con un piso de 50 m² que con un chalet de 200 m².</li>
     </ul>
   </div>
   <div class="controls"><span class="lbl">Modelo:</span><span id="resModel"></span></div>
@@ -307,33 +366,40 @@
 
   <h3>3.4 Divide y vencerás</h3>
   <div class="kid">
-    <div class="k-title">🧒 ¿Por qué dividir?</div>
-    Si quieres una receta para hacer <b>pasteles y galletas</b> 🎂🍪 a la vez, te saldrá regular para los dos.
-    Es mejor tener <b>una receta para pasteles y otra para galletas</b>.
-    <br><br>
-    Con las casas pasa lo mismo. En los residuos del modelo único vimos dos grupos mezclados.
-    Las casas con calefacción de gas reaccionan <b>mucho más</b> al frío y al tamaño que las demás, porque todo su calor sale del gas.
-    Un solo coeficiente "promedio" no le sirve bien a ninguno de los dos grupos.
+    <div class="k-title">💡 ¿Por qué dividir? Cada hogar usa la energía de forma distinta</div>
+    Piensa en de dónde sale el calor de cada casa:
+    <ul class="tight">
+      <li><b>Con calefacción de gas</b>, el frío del invierno se nota en la <b>factura del gas</b>.</li>
+      <li><b>Con calefacción eléctrica</b>, el frío se nota en la <b>factura de la luz</b> (mediana de 5 584 kWh de luz frente a 2 555 en los de gas)
+        y el gas solo se usa para cocinar y el agua caliente.</li>
+    </ul>
+    Una sola fórmula para todos usa un "precio por m²" y un "precio por °C" promedio que no le sirve bien a ningún grupo:
+    se queda corta con los de gas y se pasa con los eléctricos.
+    Por eso tiene sentido hacer <b>una fórmula para cada tipo de calefacción</b>, igual que las compañías ofrecen tarifas distintas según el uso.
   </div>
   <div id="tblPorTipo" class="tbl-wrap"></div>
   <div class="see" id="porTipoText"></div>
 
   <h4>Un paso más: usar logaritmos (pensar en porcentajes)</h4>
   <div class="kid">
-    <div class="k-title">🧒 ¿Para qué el logaritmo?</div>
-    A veces las cosas no <b>suman</b> sino que <b>multiplican</b>. Una casa del doble de tamaño no gasta "200 kWh más",
-    gasta <b>el doble</b>. Y 1 °C más de frío no añade lo mismo a una casa pequeña que a una mansión: añade un <b>porcentaje</b>.
-    El logaritmo convierte multiplicaciones en sumas para que nuestra receta de rectas funcione con porcentajes. 🪄
+    <div class="k-title">💡 ¿Para qué el logaritmo? Porque el consumo crece en porcentaje</div>
+    Muchas cosas en la factura funcionan en porcentaje: el IVA del 21 % suma más euros a una factura grande que a una pequeña.
+    Con el gas pasa algo parecido. Un invierno 1 °C más frío no añade los mismos kWh a todos los hogares, sino un <b>porcentaje</b>
+    (≈ 4 %): unos 120 kWh a un piso que gasta 3 000, pero 360 kWh a una casa que gasta 9 000.
+    Y una vivienda del doble de tamaño no gasta "200 kWh más", gasta <b>el doble</b>.
+    <br><br>
+    El logaritmo convierte esos porcentajes y multiplicaciones en sumas, que es lo que sabe manejar una regresión lineal.
+    Así los coeficientes se leen directamente como "% de cambio en el consumo".
   </div>
   <div id="tblLog" class="tbl-wrap"></div>
   <div class="see" id="logText"></div>
 
-  <h4>¿Cuál receta adivina mejor? (prueba justa con hogares que el modelo no vio)</h4>
+  <h4>¿Qué fórmula estima mejor? (prueba justa con hogares que el modelo no vio)</h4>
   <p class="small muted">Entrenamos cada modelo con el 80 % de los hogares y medimos su error medio (MAE) en el 20 % restante.
-  Es como estudiar con unos ejercicios y hacer el examen con otros distintos 📝.</p>
+  Es como ajustar la fórmula de la factura estimada con unos contadores y comprobar cuánto se equivoca con otros contadores que no había visto.</p>
   <div id="chMae" class="chart short"></div>
 
-  <h3>🎛️ Calculadora: prueba la receta tú mismo</h3>
+  <h3>🎛️ Calculadora: estima el consumo de gas de un hogar</h3>
   <div class="card">
     <div class="controls"><span class="lbl">Calefacción:</span><span id="calcTipo"></span></div>
     <div class="sl"><label for="cSup">Superficie (m²)</label><input type="range" id="cSup" min="40" max="250" step="1" value="90"><output id="oSup"></output></div>

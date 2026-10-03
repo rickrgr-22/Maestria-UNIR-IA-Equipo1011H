@@ -4,7 +4,7 @@ Actividad grupal de la Maestría en IA (UNIR), Equipo 1011H: **análisis del con
 
 👉 **Página interactiva:** https://rickrgr-22.github.io/Maestria-UNIR-IA-Equipo1011H/
 
-Cada técnica se explica dos veces: "como para un niño de 10 años" 🧒 y con lo que significa en nuestros datos 🔎. Además, cada sección trae una frase lista para la diapositiva 🎤.
+Cada técnica se explica dos veces: primero con ejemplos del uso de la energía en casa 💡 (facturas de luz y gas, contadores, calefacción) y después con lo que significa en nuestros datos 🔎. Cada ejercicio empieza recordando lo que pide la tarea 📋 y trae una frase lista para la diapositiva 🎤.
 
 ## Qué hay en la página
 

@@ -198,3 +198,8 @@ dl.glos dd { margin: 0; color: var(--ink-2); }
 ol.steps li, ul.tight li { margin: 4px 0; }
 
 #tblZonas th:last-child { text-align: left; }
+.task {
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 4px solid var(--ink-2); border-radius: 12px; padding: 14px 18px; margin: 16px 0;
+}
+.task > .k-title { font-weight: 650; margin-bottom: 4px; }
